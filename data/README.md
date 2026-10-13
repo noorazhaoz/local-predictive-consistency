@@ -1,38 +1,57 @@
-# Data access and expected local paths
+# Data access and preparation
 
-**Data are not distributed in this code-only repository.** Please obtain datasets from their original providers and comply with relevant access and licensing terms.
+This repository contains research code but does not redistribute raw datasets. Download the required data from the sources below and follow the providers' terms of use.
 
-| Dataset | Source / documentation | Expected local file or package loader |
-| --- | --- | --- |
-| Adult | UCI Adult dataset; verify original URL | `data/adult/adult.data`, `data/adult/adult.test` |
-| COMPAS | Public COMPAS dataset; verify original URL | `data/compas/compas-scores-two-years.csv` |
-| Employee Salary | [Kaggle Employee Data (gmudit)](https://www.kaggle.com/datasets/gmudit/employer-data) | `data/Employers_data.csv` |
-| Insurance | Paper reference: [Suess (2017) course material](http://www.sci.csueastbay.edu/~esuess/stat6620/#week-6) (currently inaccessible). Possible alternative: [Kaggle Medical Cost Personal Datasets](https://www.kaggle.com/datasets/mirichoi0218/insurance) (**file identity not yet verified**) | `data/insurance.csv` |
-| FLCHAIN | `scikit-survival` | `sksurv.datasets.load_flchain()` |
-| WHAS | `scikit-survival` | `sksurv.datasets.load_whas500()` |
-| ROSSI | `lifelines` | `lifelines.datasets.load_rossi()` |
+## Datasets
 
-## Regression data
+| Task | Dataset | Source | Expected location or loader |
+| --- | --- | --- | --- |
+| Binary classification | Adult | UCI Adult dataset | `data/adult/adult.data`, `data/adult/adult.test` |
+| Binary classification | COMPAS | Public COMPAS dataset | `data/compas/compas-scores-two-years.csv` |
+| Regression | Employee Salary | [Kaggle Employee Data (gmudit)](https://www.kaggle.com/datasets/gmudit/employer-data) | `data/Employers_data.csv` |
+| Regression | Insurance | [Suess (2017), cited in the paper](http://www.sci.csueastbay.edu/~esuess/stat6620/#week-6); [alternative Kaggle listing](https://www.kaggle.com/datasets/mirichoi0218/insurance) | `data/insurance.csv` |
+| Survival analysis | FLCHAIN | `scikit-survival` | `sksurv.datasets.load_flchain()` |
+| Survival analysis | WHAS | `scikit-survival` | `sksurv.datasets.load_whas500()` |
+| Survival analysis | ROSSI | `lifelines` | `lifelines.datasets.load_rossi()` |
 
-The Employee Salary dataset source was supplied by the authors. Download the original dataset and ensure the input CSV is named `Employers_data.csv` in the expected `data/` directory, after verifying its schema against the existing project preprocessing.
+The alternative Insurance listing has not been confirmed to be identical to the file used in the experiments. Check its content and column names against the original data before substituting it.
 
-For Insurance, the manuscript cites Suess (2017). That reference URL is retained for bibliographic consistency but was not accessible at the time of this documentation update. A Kaggle listing with 1,338 observations and seven columns appears consistent with the paper's dataset description; **this is a candidate rather than a verified exact source**. Compare its schema/content to the original `insurance.csv` before use.
+## File structure
 
-## Commands
+Place downloaded classification and regression files under `data/` as follows:
 
-The regression entry point accepts a dataset identifier and a data-file path. From `regression/`:
+```text
+data/
+├── adult/
+│   ├── adult.data
+│   └── adult.test
+├── compas/
+│   └── compas-scores-two-years.csv
+├── Employers_data.csv
+└── insurance.csv
+```
+
+Survival datasets are loaded by the corresponding Python packages and do not require local CSV files.
+
+## Regression commands
+
+Run these commands from the `regression/` directory:
 
 ```bash
 python run_regression_inproc_urw.py --dataset employers --data_path ../data/Employers_data.csv
 python run_regression_inproc_urw.py --dataset insurance --data_path ../data/insurance.csv
 ```
 
-The core scripts include task-specific preprocessing after loading. A verified automated downloader is not supplied. Commands were checked against argument parsing but have not been run-tested in the cleaned repository.
+The scripts perform task-specific preprocessing after loading the data. Paths beginning with `../data/` are relative to the experiment directory.
 
-## Insurance input schema
+### Insurance data schema
 
-The regression entry script `regression/run_regression_inproc_urw.py` expects the columns `age`, `sex`, `bmi`, `children`, `smoker`, `region`, and **`expenses`**. Some publicly shared Kaggle insurance CSVs call the outcome **`charges`** instead. Confirm that an externally downloaded file matches the original study dataset; rename the local `charges` column to `expenses` only after verification. No dataset files are bundled.
+The Insurance implementation uses `expenses` as its response variable and expects the following columns:
 
-## Shell / working directory conventions
+`age`, `sex`, `bmi`, `children`, `smoker`, `region`, `expenses`.
 
-Run the documented commands while inside the named experiment folder. All paths beginning with `../data/` are relative to that working directory. Survival data are loaded through `scikit-survival` and `lifelines` and do not require CSV files in `data/`.
+Some externally available versions use `charges` instead of `expenses`. If obtaining an alternative version, first confirm that it corresponds to the study data and then match the expected input schema. **The original experimental file uses `expenses`; no changes to the research code are needed for that file.**
+
+## Reproducibility note
+
+Input data are not included in this code-only release. The listed commands reflect the script interfaces, but the cleaned public repository has not been independently tested end-to-end on a fresh installation.
