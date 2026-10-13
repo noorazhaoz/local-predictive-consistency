@@ -1,6 +1,6 @@
 # Individual Fairness via Local Predictive Consistency
 
-Research implementation accompanying the TMLR manuscript **Individual Fairness via Local Predictive Consistency**. 
+Code accompanying the manuscript **Individual Fairness via Local Predictive Consistency**, accepted with minor revision at *Transactions on Machine Learning Research (TMLR)*.
 
 **Authors:** Zhouting Zhao and Tin Lok James Ng  
 **Affiliation:** Trinity College Dublin  
@@ -8,25 +8,27 @@ Research implementation accompanying the TMLR manuscript **Individual Fairness v
 
 ## Overview
 
-The paper studies local predictive consistency as a node-level relaxation of pairwise individual fairness. It uses a similarity-weighted neighborhood prediction and regularizes deviations from that reference (URW, based on the row-random-walk Laplacian). Experiments span binary classification, regression, and time-to-event prediction, with comparisons to graph-Laplacian and other individual-fairness baselines.
+We study **local predictive consistency** as a node-level relaxation of pairwise individual fairness. For each instance, the method compares its prediction with a similarity-weighted average of neighboring predictions. The resulting local residual provides an individual-level diagnostic and motivates a fairness regularizer based on the row-random-walk graph Laplacian (URW).
 
-## Repository layout
+The experiments cover binary classification, regression, and time-to-event prediction. We evaluate predictive performance and local consistency against graph-Laplacian and other individual-fairness baselines.
 
-- `binary/`: Adult and COMPAS classification experiments, URW Forward-KL/Reverse-KL variants, baselines and analysis.
-- `regression/`: regression URW, Laplacian comparisons, p-norm and sensitivity analysis.
-- `survival/`: DeepSurv/log-risk survival experiments and comparisons.
-- `survival_discrete/`: survival-function/discrete-time experiments.
-- `revise/`: additional analyses prepared for peer review (graph coverage, pairwise metrics, Waller-style diagnostics, robustness).
-- `results/`: analysis and plotting scripts only; generated figures, tables, metrics, and intermediate result files are not distributed.
-- `data/`: dataset preparation notes; **raw datasets intentionally omitted from this draft**.
+## Repository structure
 
-The code folder names are kept as in the working directory to avoid silently breaking relative imports and paths.
+| Directory | Contents |
+| --- | --- |
+| `binary/` | Adult and COMPAS classification; URW Forward-KL and Reverse-KL; comparison and analysis scripts |
+| `regression/` | Regression experiments, Laplacian comparisons, p-norm and sensitivity analyses |
+| `survival/` | DeepSurv / log-risk experiments |
+| `survival_discrete/` | Survival-function prediction experiments |
+| `revise/` | Graph coverage, pairwise diagnostics, Waller-style consistency and other robustness analyses |
+| `results/` | Plotting and analysis scripts (generated outputs are not included) |
+| `data/` | Data access and preparation notes |
 
-## Development environment and setup
+See [`PAPER_TO_CODE_MAP.md`](PAPER_TO_CODE_MAP.md) for a guide to the code associated with the manuscript's figures, tables and appendices.
 
-The experiments reported in the manuscript were developed and run on **macOS with Python 3.8**, primarily by executing standalone `.py` scripts. The authors confirmed that the original project code was used to produce the manuscript experiments. No particular environment-management tool has been identified for the original runs, and the exact dependency versions have not yet been recovered.
+## Installation
 
-For a new installation on macOS, the following **suggested** `venv`/`pip` setup is provided for convenience; it does not imply that the original experiments were run using `venv`. Use a Python 3.8 interpreter when available and check package compatibility before installing the dependencies. The `requirements.txt` versions are provisional until verified against a working environment.
+The experiments were developed on **macOS using Python 3.8** and run primarily as standalone Python scripts. To create a local environment:
 
 ```bash
 python3.8 -m venv .venv
@@ -34,58 +36,68 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-These commands have not been independently tested on a clean machine. Some optional baselines require separate upstream implementations, solvers, or additional dependencies; the removed third-party source directories are not bundled here.
+The dependency list provides a starting point; exact package versions from the original environment have not been recovered.
 
-## Core experiment commands (verified against script arguments; not independently run-tested)
+## Running the main experiments
 
-Run from each experiment subdirectory because the original scripts use paths relative to their current working directory. First follow `data/README.md` to supply required input files.
+Run commands from the respective experiment directories because some scripts use relative paths. Download the required datasets as described in [`data/README.md`](data/README.md).
+
+**Binary classification (Adult, Forward-KL):**
 
 ```bash
 cd binary
 python run_binary_inproc_urw_adult.py --dataset adult --data_dir ../data --agg forward
+```
 
-cd ../regression
+**Regression (Employee Salary):**
+
+```bash
+cd regression
 python run_regression_inproc_urw.py --dataset employers --data_path ../data/Employers_data.csv
+```
 
-cd ../survival
+**Survival analysis (DeepSurv, WHAS):**
+
+```bash
+cd survival
 python run_survival_inproc_deepsurv_urw.py --dataset whas
+```
 
-cd ../survival_discrete
+**Survival-function prediction (WHAS):**
+
+```bash
+cd survival_discrete
 python run_survival_inproc_urw.py --dataset whas
 ```
 
-Switch `--dataset` and, for binary classification, `--agg` to select other supported experiments. See the script `--help` flags for settings including random seed, number of iterations, regularization strength, and graph parameters.
+Each command assumes you start in the repository root. Other datasets, aggregation methods and experiment configurations can be selected using the scripts' available arguments. The commands identify the main entry points; they have not been independently tested in a fresh environment after repository curation. Some figures and additional analyses require locally generated intermediate outputs.
 
-The original scripts were used in the authors’ research, but **these illustrative commands and the cleaned public repository have not yet been independently run-tested**. The full experiments may be expensive. Defaults in individual scripts are not necessarily the exact settings used for all published tables/figures; consult manuscript and shell scripts, and record the exact configuration for each figure before claiming full reproduction.
+## Datasets
 
-## Additional analyses
+This is a **code-only** repository. Dataset files, trained models and generated experimental results are not redistributed.
 
-The `revise/` scripts cover graph coverage and isolated nodes, independent pairwise diagnostics, external Waller-style consistency measures, and matched performance–fairness comparisons. Some scripts expect intermediate artifacts generated by earlier runs; generated artifacts are not distributed in this code-only release. Consult `PUBLICATION_CHECKLIST.md`.
-
-## Datasets and data preparation
-
-The public repository distributes code only: no raw datasets, trained model files, generated figures, output CSVs, or metrics. Users must obtain original inputs themselves and generate outputs locally. The experiments use seven datasets across three prediction tasks. The provenance below reflects the authors' dataset collection workflow; dataset package versions, some source URLs and redistribution terms still need confirmation before release.
-
-| Task | Dataset | Source / acquisition route |
+| Task | Dataset | Source / loading method |
 | --- | --- | --- |
-| Binary classification | Adult | Public dataset; loaders expect `data/adult/adult.data` and `data/adult/adult.test`; verify upstream source link. |
-| Binary classification | COMPAS | Public dataset; loader expects `data/compas/compas-scores-two-years.csv`; verify upstream source link. |
-| Regression | Employee Salary | [Kaggle Employee Data](https://www.kaggle.com/datasets/gmudit/employer-data) (gmudit); licensing/access terms to be checked. |
-| Regression | Insurance | Kaggle data; paper reference: [Suess (2017)](http://www.sci.csueastbay.edu/~esuess/stat6620/#week-6) (currently inaccessible). Candidate dataset: [Medical Cost Personal Datasets](https://www.kaggle.com/datasets/mirichoi0218/insurance), subject to file verification. |
-| Survival analysis | FLCHAIN | `scikit-survival` (`sksurv.datasets.load_flchain`); installed version pending. |
-| Survival analysis | WHAS | `scikit-survival` (`sksurv.datasets.load_whas500`); installed version pending. |
-| Survival analysis | ROSSI | `lifelines` (`lifelines.datasets.load_rossi`); installed version pending. |
+| Classification | Adult | [UCI Adult](https://archive.ics.uci.edu/dataset/2/adult); expected files: `data/adult/adult.data`, `data/adult/adult.test` |
+| Classification | COMPAS | [ProPublica COMPAS data](https://github.com/propublica/compas-analysis); expected file: `data/compas/compas-scores-two-years.csv` |
+| Regression | Employee Salary | [Kaggle Employee Data](https://www.kaggle.com/datasets/gmudit/employer-data); local path: `data/Employers_data.csv` |
+| Regression | Insurance | [Suess (2017), cited in the paper](http://www.sci.csueastbay.edu/~esuess/stat6620/#week-6); local path: `data/insurance.csv` |
+| Survival | FLCHAIN | `sksurv.datasets.load_flchain()` |
+| Survival | WHAS | `sksurv.datasets.load_whas500()` |
+| Survival | ROSSI | `lifelines.datasets.load_rossi()` |
 
-The Employee Data Kaggle listing was identified, while the Suess course URL could not be confirmed as an active data download. The alternative Insurance Kaggle listing has 1,338 records and seven columns, but matching dimensions alone do not establish file identity. Check the original file before substituting it.
+The Insurance experiments use an input file whose outcome column is named **`expenses`**. When obtaining a file from a different source, check its column names and data compatibility before running the scripts. The manuscript's cited Insurance source is retained above; it is not presented as a verified direct CSV download.
 
-The authors' original working archive includes `data/Employers_data.csv` and `data/insurance.csv`. The regression loader requires an `expenses` response column for Insurance. A common Kaggle insurance dataset instead labels the response `charges`; if using that source, verify its equivalence to the original file and adapt the local input schema (e.g., rename `charges` to `expenses`) before running. **No raw datasets are distributed in this code-only release.** Data preprocessing is implemented in the project code, but download/loading instructions and the end-to-end preprocessing commands still need verification. Consult `data/README.md` and `PUBLICATION_CHECKLIST.md` before attempting to reproduce the experiments.
+For local file layout, preprocessing and additional data notes, see [`data/README.md`](data/README.md).
 
-## Licensing
+## Reproducibility and external baselines
 
-A license for the authors' original code has not yet been selected. Until a license is explicitly added, no open-source license is granted by default. The authors should agree on licensing before public release. Third-party baseline implementations are not bundled and remain subject to their respective terms. Dataset licenses and redistribution conditions are separate from any code license.
+The repository includes the authors' core implementation and associated analysis scripts. Third-party baseline implementations, including iFair, iFlipper and SenSR, are not redistributed; any wrappers that depend on them require the corresponding upstream code and dependencies. Generated intermediate files must be recreated locally for plotting or downstream analyses. Exact reproduction of every reported result has not been independently verified from a clean installation.
 
-## Reproducibility and third-party dependencies
+## License
 
-Dataset redistribution permissions must be checked before any raw data is added to a public repository. Third-party baseline source directories (iFair, iFlipper, SenSR) are not distributed in this repository. Scripts importing these implementations require separately obtained upstream code subject to its original terms. No generated result artifacts are included. This release does not guarantee end-to-end reproduction of every baseline.
+No license has been selected for the original code yet. Permission for reuse will be governed by a license added after agreement between the authors. Third-party code and data remain subject to their own terms.
 
+## Citation
 
+Zhouting Zhao and Tin Lok James Ng. *Individual Fairness via Local Predictive Consistency*. Transactions on Machine Learning Research (TMLR), accepted with minor revision (2026). Please cite the final published article when its bibliographic details become available.
