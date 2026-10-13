@@ -1,0 +1,14 @@
+# Inferred from source imports; versions unpinned, not environment-validated.
+numpy
+pandas
+scipy
+scikit-learn
+torch
+matplotlib
+scikit-survival
+lifelines
+tqdm
+joblib
+seaborn
+networkx
+# Optional baseline dependencies: aif360, cvxpy, cplex, mosek (check licenses and availability)
