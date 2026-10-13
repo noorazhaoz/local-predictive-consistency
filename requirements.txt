@@ -1,4 +1,4 @@
-# Inferred from source imports; versions unpinned, not environment-validated.
+# Core dependencies for the experiments in this repository.
 numpy
 pandas
 scipy
@@ -11,4 +11,6 @@ tqdm
 joblib
 seaborn
 networkx
-# Optional baseline dependencies: aif360, cvxpy, cplex, mosek (check licenses and availability)
+
+# Some third-party baseline scripts require additional packages and
+# upstream implementations not included in this repository.
