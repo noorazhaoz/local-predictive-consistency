@@ -2,11 +2,9 @@
 
 Research implementation accompanying the TMLR manuscript **Individual Fairness via Local Predictive Consistency**.
 
-**Authors:** Zhouting Zhao and Tin Lok James Ng  
-**Affiliation:** Trinity College Dublin  
-**GitHub account:** https://github.com/noorazhaoz  
-**Intended repository:** `local-predictive-consistency` (https://github.com/noorazhaoz/local-predictive-consistency; create and verify before citing)  
-**Repository status:** Camera-ready preparation; the final public repository URL is not yet confirmed.
+**Authors:** Zhouting Zhao and Tin Lok James Ng
+**Affiliation:** Trinity College Dublin
+**Repository:** https://github.com/noorazhaoz/local-predictive-consistency  
 
 > **Pre-publication draft:** This repository has been organized from an experimental working directory. It has **not yet been independently validated as end-to-end reproducible**. Review the checkpoints below before publishing or linking it in the TMLR camera-ready submission.
 
