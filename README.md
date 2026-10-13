@@ -1,6 +1,7 @@
 # Individual Fairness via Local Predictive Consistency
 
 Research implementation accompanying the TMLR manuscript **Individual Fairness via Local Predictive Consistency**. 
+
 **Authors:** Zhouting Zhao and Tin Lok James Ng  
 **Affiliation:** Trinity College Dublin  
 **Repository:** https://github.com/noorazhaoz/local-predictive-consistency
